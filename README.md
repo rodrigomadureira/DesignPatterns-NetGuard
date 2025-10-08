@@ -1,75 +1,76 @@
-# 🎯 DesignPatterns-NetGuard  
-**Arquitetura de Software — FESA 2025**  
+# 🧱 DesignPatterns-NetGuard  
+Repositório da N1 do 2º Bimestre da disciplina **Arquitetura de Software — Fundação Salvador Arena (FESA) — 2025**  
 Professor: *Gabriel Lara Baptista*  
-Grupo: **NetGuard - Grupo 7**
+Grupo: **NetGuard – Grupo 7**
 
 ---
 
 ## 🧩 Introdução
 
-Os **Design Patterns (Padrões de Projeto)** são soluções consolidadas para problemas recorrentes de design de software.  
-Eles não são código pronto, mas **modelos reutilizáveis** que orientam a construção de sistemas mais **escaláveis, coesos e de fácil manutenção**.  
+Os **Design Patterns (Padrões de Projeto)** são soluções consolidadas para problemas recorrentes no design de software.  
+Eles não são código pronto, mas **modelos reutilizáveis** que orientam o desenvolvimento de sistemas **mais coesos, escaláveis e fáceis de manter**.
 
-> “Padrões arquiteturais ajudam. Princípios de design ajudam. Hoje todo mundo quer ser ágil, mas também é preciso ser inteligente.”  
+> “Padrões arquiteturais ajudam. Princípios de design ajudam.  
+> Hoje todo mundo quer ser ágil, mas também é preciso ser inteligente.”  
 > — *Ivar Jacobson*
 
 ---
 
 ## 🧠 Classificação dos Design Patterns
 
-Os padrões são tradicionalmente divididos em três categorias principais:
+Os padrões de projeto são tradicionalmente classificados em **três categorias**:
 
 | Categoria | Foco | Exemplos |
 |------------|------|-----------|
-| **Criacionais** | Como criar objetos | Singleton, Factory Method, Abstract Factory, Builder, Prototype |
-| **Estruturais** | Como organizar e compor classes/objetos | Adapter, Facade, Composite, Decorator, Proxy, Bridge |
-| **Comportamentais** | Como os objetos interagem | Strategy, Observer, Command, Template Method, State, Chain of Responsibility |
+| **Criacionais** | Controlam o processo de criação de objetos | Singleton, Factory Method, Abstract Factory, Builder, Prototype |
+| **Estruturais** | Definem como as classes e objetos se organizam | Adapter, Facade, Composite, Decorator, Proxy, Bridge |
+| **Comportamentais** | Definem como os objetos interagem entre si | Strategy, Observer, Command, Template Method, State, Chain of Responsibility |
 
-📚 Fonte: [Refactoring.Guru – Design Patterns](https://refactoring.guru/design-patterns/classification)
+📚 **Fonte:** [Refactoring.Guru – Design Patterns](https://refactoring.guru/design-patterns/classification)
 
 ---
 
 ## 💡 Padrões Escolhidos
 
 No contexto do **NetGuard** — uma plataforma proativa de monitoramento e rastreabilidade de incidentes de rede —  
-foram implementados **dois padrões** que se encaixam perfeitamente na arquitetura atual do projeto:
+foram aplicados **dois padrões principais** que reforçam a modularidade e extensibilidade da arquitetura:
 
 ---
 
 ### ⚙️ 1. Strategy (Comportamental)
 
 **Problema:**  
-A necessidade de realizar diferentes tipos de sondagem (ICMP, TCP, HTTP) fazia o código ficar cheio de condicionais `if/elif`.
+O sistema precisava realizar diferentes tipos de sondagem (ICMP, TCP, HTTP). Isso deixava o código cheio de condicionais `if/elif`, violando princípios de design limpo.
 
 **Solução:**  
-Encapsulamos cada tipo de sonda em uma *estratégia intercambiável*, todas herdando da interface `ProbeStrategy`.  
-Assim, podemos alternar dinamicamente o tipo de monitoramento sem alterar o código principal.
+Encapsular cada tipo de sonda em uma *estratégia intercambiável*, todas herdando da interface `ProbeStrategy`.  
+Isso permite alternar dinamicamente o tipo de monitoramento sem modificar o código principal.
 
 **Benefícios:**
 - Baixo acoplamento entre os tipos de sonda  
-- Facilidade para adicionar novos métodos (ex.: DNS, SNMP)  
+- Facilidade para adicionar novos protocolos (DNS, SNMP etc.)  
 - Testabilidade e extensibilidade  
 
 **Trade-offs:**
-- Cria mais classes e abstrações (complexidade inicial um pouco maior)
+- Maior número de classes e abstrações, aumentando a complexidade inicial
 
 ---
 
 ### 🏭 2. Factory Method (Criacional)
 
 **Problema:**  
-Era necessário instanciar dinamicamente a estratégia correta de sondagem sem usar múltiplos `if`s.
+Era necessário instanciar dinamicamente a estratégia de sondagem correta (ICMP, TCP ou HTTP), sem usar condicionais espalhadas.
 
 **Solução:**  
-Implementamos uma *fábrica centralizada* (`create_probe(kind)`) que cria objetos de forma polimórfica conforme o tipo solicitado.
+Implementar uma *fábrica centralizada* (`create_probe(kind)`) que instancia automaticamente a estratégia adequada, seguindo o princípio **Open/Closed (OCP)**.
 
 **Benefícios:**
-- Centraliza a lógica de criação  
-- Facilita integração com configurações dinâmicas  
-- Segue o princípio **Open/Closed (OCP)** — aberto para extensão, fechado para modificação  
+- Centraliza e desacopla a lógica de criação  
+- Facilita integração com arquivos de configuração  
+- Extensível: basta registrar uma nova estratégia  
 
 **Trade-offs:**
-- Introduz uma indireção extra (camada de abstração de criação)
+- Introduz uma camada extra de abstração
 
 ---
 
@@ -80,7 +81,7 @@ DesignPatterns-NetGuard/
 │
 ├── netguard/
 │   ├── probes/
-│   │   ├── base.py          # Interface e estrutura comum (ProbeStrategy, ProbeResult)
+│   │   ├── base.py          # Interface base (ProbeStrategy, ProbeResult)
 │   │   ├── factory.py       # Implementação do Factory Method
 │   │   └── strategies/
 │   │       ├── icmp.py      # Estratégia ICMP
@@ -89,8 +90,130 @@ DesignPatterns-NetGuard/
 │   └── __init__.py
 │
 ├── tests/
-│   └── test_probes.py       # Testes automatizados com Pytest
+│   └── test_probes.py       # Testes automatizados (pytest)
 │
 ├── main_demo.py             # Script de demonstração
 ├── requirements.txt
 └── README.md
+```
+
+---
+
+## 📊 Diagrama UML
+
+```mermaid
+classDiagram
+  class ProbeResult {
+    +ok: bool
+    +rtt_ms: float?
+    +status: int?
+    +error: str?
+  }
+
+  class ProbeStrategy {
+    <<interface>>
+    +probe(...): ProbeResult
+  }
+
+  class ICMPProbe {
+    +probe(host): ProbeResult
+  }
+
+  class TCPProbe {
+    +probe(host, port): ProbeResult
+  }
+
+  class HTTPProbe {
+    +probe(url): ProbeResult
+  }
+
+  class ProbeFactory {
+    +create_probe(kind): ProbeStrategy
+  }
+
+  ProbeStrategy <|.. ICMPProbe
+  ProbeStrategy <|.. TCPProbe
+  ProbeStrategy <|.. HTTPProbe
+  ProbeFactory --> ProbeStrategy
+```
+
+> 💡 **Dica:** O GitHub renderiza automaticamente o diagrama acima.  
+> Você verá as classes e heranças visualmente ao visualizar o README no navegador.
+
+---
+
+## 🚀 Exemplo de Uso
+
+```python
+from netguard.probes.factory import create_probe
+
+icmp = create_probe("icmp")
+print("ICMP:", icmp.probe("google.com"))
+
+tcp = create_probe("tcp")
+print("TCP:", tcp.probe("google.com", port=443))
+
+http = create_probe("http")
+print("HTTP:", http.probe("https://example.org"))
+```
+
+🧠 **Explicação:**  
+- O método `create_probe()` cria a estratégia de acordo com o tipo informado.  
+- Cada sonda executa uma verificação e retorna um objeto `ProbeResult`.  
+- O resultado contém atributos como `ok`, `rtt_ms`, `status` e `error`.
+
+---
+
+## 🧪 Testes
+
+Os testes foram desenvolvidos com **pytest** e verificam a integridade e consistência de todas as estratégias.
+
+### ✅ Executando os testes
+
+```bash
+pytest -q
+```
+
+**Validações realizadas:**
+- Retorno consistente (`ProbeResult`)  
+- Nenhuma exceção durante execução  
+- Contrato das interfaces respeitado  
+
+---
+
+## 🧱 Conclusões
+
+- A aplicação dos padrões **Strategy** e **Factory Method** deixou o módulo de sondagem do NetGuard **mais flexível, modular e testável**.  
+- A adição de novas estratégias é **simples e isolada**, respeitando os princípios **SOLID**.  
+- O código tornou-se mais legível, escalável e aderente às boas práticas de arquitetura discutidas nas aulas do professor **Gabriel Lara**.  
+- A abordagem também se alinha aos fundamentos de **DevSecOps**, destacando versionamento, testes automatizados e modularização.  
+
+---
+
+## 📚 Referências
+
+- [Refactoring.Guru — *Design Patterns Catalog*](https://refactoring.guru/design-patterns)  
+- Baptista, G. L. — *Aulas de Arquitetura de Software* (FESA, 2025)  
+- Pressman, R. S.; Maxim, B. R. — *Engenharia de Software: Uma Abordagem Profissional*, 8ª ed. AMGH, 2016.  
+- Sommerville, I. — *Engenharia de Software*, 10ª ed. Pearson, 2019.  
+- Donavan Brown — *What is DevOps?* (Microsoft Azure CTO Incubations)  
+- Azure Architecture Center — *Cloud Design Patterns & Microservices Patterns*  
+  <https://learn.microsoft.com/en-us/azure/architecture/patterns/>
+
+---
+
+## 👥 Equipe NetGuard
+
+| Integrante | Função |  
+|-------------|---------|  
+| **Rodrigo Madureira** | Arquiteto de Software / Dev Principal |  
+| **Willian Souza** | Infraestrutura e Backend |  
+| **Estela Ferreira** | Frontend e UX |  
+| **Lucas Almeida** | BI e Análise de Dados |
+
+---
+
+## 🏁 Licença
+
+Este projeto é livre para fins **educacionais** e de **pesquisa acadêmica**.  
+© 2025 — *NetGuard Team*, Fundação Salvador Arena.

@@ -202,18 +202,3 @@ pytest -q
 
 ---
 
-## 👥 Equipe NetGuard
-
-| Integrante | Função |  
-|-------------|---------|  
-| **Rodrigo Madureira** | Arquiteto de Software / Dev Principal |  
-| **Willian Souza** | Infraestrutura e Backend |  
-| **Estela Ferreira** | Frontend e UX |  
-| **Lucas Almeida** | BI e Análise de Dados |
-
----
-
-## 🏁 Licença
-
-Este projeto é livre para fins **educacionais** e de **pesquisa acadêmica**.  
-© 2025 — *NetGuard Team*, Fundação Salvador Arena.
